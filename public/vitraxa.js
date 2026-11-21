@@ -1048,15 +1048,7 @@ function payPanel(o) {
   const total = rp(o.total);
   let visual = '', title = '', steps = [];
   if (o.methodId === 'qris') {
-    const N = 25; const fin = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= N - 7) || (r >= N - 7 && c < 7);
-    let rects = '';
-    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-      let on;
-      if (fin(r, c)) { const lr = r < 7 ? r : r - (N - 7), lc = c < 7 ? c : c - (N - 7); on = lr === 0 || lr === 6 || lc === 0 || lc === 6 || (lr >= 2 && lr <= 4 && lc >= 2 && lc <= 4); }
-      else on = rnd() % 100 < 48;
-      if (on) rects += `<rect x="${c}" y="${r}" width="1" height="1"/>`;
-    }
-    visual = `<div class="qr"><svg viewBox="-2 -2 ${N + 4} ${N + 4}" aria-label="Kode QRIS" role="img"><rect x="-2" y="-2" width="${N + 4}" height="${N + 4}" fill="#fff"/><g fill="#0D1F1A" shape-rendering="crispEdges">${rects}</g></svg><small>Kode QRIS · ${total}</small></div>`;
+    visual = `<div class="qr"><img src="/assets/images/payments/qris-baru.png" alt="Kode QRIS" style="width:100%;max-width:220px;height:auto;display:block;background:#fff;border-radius:12px"/><small>Kode QRIS · ${total}</small></div>`;
     title = 'Bayar dengan QRIS';
     steps = ['Buka aplikasi e-wallet atau m-banking apa pun yang mendukung QRIS.', 'Pindai kode QRIS di samping.', 'Pastikan total ' + total + ', lalu konfirmasi pembayaran.'];
   } else if (o.methodId === 'va') {
