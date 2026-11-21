@@ -20,14 +20,8 @@ const SITE = {
 
 /* Metode bayar. fee: persen dari total, atau flat. Dibulatkan ke atas. */
 const PAY_METHODS = [
-  { id: 'qris',      name: 'QRIS',             desc: 'Semua e-wallet & m-banking', mark: 'QR', color: '#121212', fee: { type: 'percent', value: 0.7 } },
-  { id: 'dana',      name: 'DANA',             desc: 'Saldo DANA',                 mark: 'DA', color: '#1E88E5', fee: { type: 'percent', value: 1.5 } },
-  { id: 'ovo',       name: 'OVO',              desc: 'Saldo OVO',                  mark: 'OV', color: '#5B3FD0', fee: { type: 'percent', value: 1.5 } },
-  { id: 'gopay',     name: 'GoPay',            desc: 'Saldo GoPay',                mark: 'GP', color: '#0E9F6E', fee: { type: 'percent', value: 1.5 } },
-  { id: 'shopeepay', name: 'ShopeePay',        desc: 'Saldo ShopeePay',            mark: 'SP', color: '#EE4D2D', fee: { type: 'percent', value: 1.5 } },
-  { id: 'va',        name: 'Virtual Account',  desc: 'BCA, BNI, BRI, Mandiri, Permata', mark: 'VA', color: '#475569', fee: { type: 'flat', value: 4000 } },
-  { id: 'bank',      name: 'Transfer Bank',    desc: 'Transfer manual antarbank',  mark: 'TB', color: '#8A5A00', fee: { type: 'flat', value: 2500 } }
-];
+  { id: 'qris', name: 'QRIS', desc: 'Scan dari semua e-wallet & m-banking', mark: 'QR', color: '#121212', fee: { type: 'percent', value: 0.7 } }
+]
 
 
 const mk = (pre, list, unit) => list.map((r, i) => ({ id: pre + (i + 1), name: r[0], price: r[1], tag: r[2] || '', was: 0 }));
@@ -134,7 +128,7 @@ const PAGES = [
 
 const FAQ = [
   ['Bagaimana cara memesan?', 'Pilih layanan atau game, isi data tujuan, pilih nominal, lalu pilih metode bayar. Setelah pesanan dibuat, selesaikan pembayaran dari halaman detail pesanan.'],
-  ['Apa saja metode pembayarannya?', 'QRIS, DANA, OVO, GoPay, ShopeePay, Virtual Account, dan Transfer Bank. Biaya admin tiap metode ditampilkan sebelum Anda membayar.'],
+  ['Apa saja metode pembayarannya?', 'Saat ini pembayaran tersedia melalui QRIS. Biaya layanan ditampilkan sebelum Anda membayar.'],
   ['Berapa lama batas waktu pembayaran?', 'Setiap pesanan punya batas pembayaran 24 jam. Lewat dari itu, pesanan dibatalkan otomatis.'],
   ['Di mana saya memantau status pesanan?', 'Buka menu Cek Transaksi lalu masukkan nomor invoice. Status yang dipakai: Menunggu Pembayaran, Diproses, Berhasil, Gagal, dan Dibatalkan. Simpan nomor invoice Anda, karena riwayat tidak disimpan di situs ini.'],
   ['Salah memasukkan ID atau nomor tujuan, bagaimana?', 'Periksa kembali data sebelum membayar. Pesanan yang sudah berhasil diproses tidak dapat dibatalkan. Hubungi kami bila ada kendala dan siapkan nomor invoice Anda.'],
@@ -220,7 +214,7 @@ function logoMark(size) {
 }
 
 function logoFull() {
-  return `<a class="logo" href="#/" aria-label="${SITE.name} — Beranda">${logoMark(40)}<span class="logo__word"><b>${SITE.first}</b><span>${SITE.second}</span></span></a>`;
+  return `<a class="logo" href="/" aria-label="${SITE.name} — Beranda">${logoMark(40)}<span class="logo__word"><b>${SITE.first}</b><span>${SITE.second}</span></span></a>`;
 }
 
 
@@ -667,7 +661,7 @@ const Palette = {
       body: `<div class="pal"><div class="pal__in">${ui('search', 20)}<input id="pal-q" type="search" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list" aria-label="Cari" placeholder="Cari layanan, game, halaman, invoice…" autocomplete="off" data-autofocus><kbd>Esc</kbd></div><ul class="pal__list" id="pal-list" role="listbox" aria-label="Hasil pencarian"></ul></div>`,
       onMount: (el, close) => {
         const input = $('#pal-q', el), list = $('#pal-list', el);
-        const cb = attachCombobox({ input, list, openOnFocus: 'keep', getResults: q => q ? SearchIndex.query(q, 8) : SearchIndex.suggestions(), onPick: it => { close(); location.hash = it.href.replace(/^#/, ''); } });
+        const cb = attachCombobox({ input, list, openOnFocus: 'keep', getResults: q => q ? SearchIndex.query(q, 8) : SearchIndex.suggestions(), onPick: it => { close(); Router.navigate(it.href); } });
         cb.render();
       }
     }).then(() => { this.isOpen = false; });
@@ -798,7 +792,7 @@ function PageHome(view) {
         <p class="pill"><i></i> Top up · Isi ulang · Tagihan</p>
         <h1 id="h1">Top up game dan isi ulang, <span class="hl2">harga terlihat</span> sebelum bayar.</h1>
         <p class="hero5__sub">Pulsa, token listrik, saldo e-wallet, tagihan, sampai diamond game favoritmu. Tanpa akun, dan status transaksi bisa dicek lewat nomor invoice.</p>
-        <div class="hero5__cta"><a class="btn btn--accent btn--lg hero5__b1" href="#/isi-ulang">Mulai Pesan ${ui('arrow', 18)}</a><a class="btn btn--outline btn--lg hero5__b2" href="#/topup">Top Up Game</a></div>
+        <div class="hero5__cta"><a class="btn btn--accent btn--lg hero5__b1" href="/isi-ulang">Mulai Pesan ${ui('arrow', 18)}</a><a class="btn btn--outline btn--lg hero5__b2" href="/topup">Top Up Game</a></div>
         <ul class="trust5">${trust}</ul>
       </div>
     </div>
@@ -810,7 +804,7 @@ function PageHome(view) {
   </section>
 
   <section class="band" aria-labelledby="h-game"><div class="wrap">${secHead('Top up game', 'Pilih game, isi ID akun, bayar.', 'h-game')}
-    <div class="covers">${covers}</div><div class="band__f"><a class="btn btn--accent" href="#/topup">Lihat semua game ${ui('arrow', 18)}</a></div></div></section>
+    <div class="covers">${covers}</div><div class="band__f"><a class="btn btn--accent" href="/topup">Lihat semua game ${ui('arrow', 18)}</a></div></div></section>
 
   <section class="wrap blk" aria-labelledby="h-how">${secHead('Cara memesan', 'Tiga langkah, selesai di satu halaman.', 'h-how')}<ol class="steps3">${steps}</ol></section>
 
@@ -820,9 +814,9 @@ function PageHome(view) {
 
   <section class="wrap blk" aria-labelledby="h-best">${secHead('Produk populer', 'Langsung ke checkout dengan nominal terpilih.', 'h-best')}<div class="bstgrid">${best}</div></section>
 
-  <section class="wrap blk" aria-labelledby="h-faq"><div class="faqwrap"><div><h2 id="h-faq">Pertanyaan yang sering muncul</h2><p class="muted">Masih ada yang kurang jelas? Buka halaman Bantuan.</p><a class="btn btn--ghost" href="#/bantuan">Buka Bantuan ${ui('arrow', 18)}</a></div><div class="faq">${faq}</div></div></section>
+  <section class="wrap blk" aria-labelledby="h-faq"><div class="faqwrap"><div><h2 id="h-faq">Pertanyaan yang sering muncul</h2><p class="muted">Masih ada yang kurang jelas? Buka halaman Bantuan.</p><a class="btn btn--ghost" href="/bantuan">Buka Bantuan ${ui('arrow', 18)}</a></div><div class="faq">${faq}</div></div></section>
 
-  <section class="wrap blk"><div class="cta"><div><h2>Siap isi ulang atau top up?</h2><p>Pilih layanan, isi data, dan bayar. Tanpa buat akun.</p></div><a class="btn btn--sun btn--lg" href="#/isi-ulang">Mulai Sekarang ${ui('arrow', 18)}</a></div></section>`;
+  <section class="wrap blk"><div class="cta"><div><h2>Siap isi ulang atau top up?</h2><p>Pilih layanan, isi data, dan bayar. Tanpa buat akun.</p></div><a class="btn btn--sun btn--lg" href="/isi-ulang">Mulai Sekarang ${ui('arrow', 18)}</a></div></section>`;
 }
 
 
@@ -833,7 +827,7 @@ function PageHome(view) {
 function PageGames(view) {
   const cats = ['Semua', ...Array.from(new Set(GAMES.map(g => g.cat)))];
   view.innerHTML = `<div class="wrap pg">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Top Up Game</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Top Up Game</span></nav>
     <header class="ph"><h1>Top up game favoritmu.</h1><p class="ph__sub">Isi ID akun, pilih nominal, bayar. ${GAMES.length} game tersedia.</p></header>
     <div class="filters"><div class="search"><label class="sr" for="g-q">Cari game</label>${ui('search', 18)}<input id="g-q" type="search" placeholder="Cari game…" autocomplete="off"></div>
       <label class="sr" for="g-sort">Urutkan</label><select id="g-sort" class="select"><option value="pop">Urutan awal</option><option value="az">A–Z</option><option value="za">Z–A</option></select></div>
@@ -859,7 +853,7 @@ function PageGames(view) {
 function PagePpob(view) {
   const groups = ['Semua', 'Prabayar', 'Tagihan'];
   view.innerHTML = `<div class="wrap pg">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Isi Ulang &amp; Tagihan</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Isi Ulang &amp; Tagihan</span></nav>
     <header class="ph"><h1>Isi ulang dan bayar tagihan.</h1><p class="ph__sub">Pulsa, data, listrik, tagihan, e-wallet, dan voucher digital.</p></header>
     <div class="filters"><div class="search"><label class="sr" for="p-q">Cari layanan</label>${ui('search', 18)}<input id="p-q" type="search" placeholder="Cari layanan…" autocomplete="off"></div></div>
     <div class="chips" id="p-cats" role="group" aria-label="Jenis layanan">${groups.map((c, i) => `<button type="button" data-cat="${c}" aria-pressed="${i === 0}">${c}</button>`).join('')}</div>
@@ -899,14 +893,14 @@ function PageService(view, kind, id, query) {
   const prodHTML = post
     ? `<div id="bill-box"><p class="muted">Isi data pelanggan di atas, lalu tekan <b>Cek Tagihan</b> untuk melihat rincian.</p></div>`
     : `<div class="opts" role="radiogroup" aria-label="Pilih nominal">${svc.products.map(p => `<label class="opt"><input type="radio" name="product" value="${p.id}" ${S.productId === p.id ? 'checked' : ''}><span class="opt__body">${p.tag ? `<em class="opt__tag">${esc(p.tag)}</em>` : ''}<b>${esc(p.name)}</b><span class="opt__price">${rp(p.price)}</span></span></label>`).join('')}</div><p class="field__err" id="prod-err" role="alert"></p>`;
-  const methods = `<div class="mchips" role="radiogroup" aria-label="Metode pembayaran">${PAY_METHODS.map(m => `<label class="mchip"><input type="radio" name="method" value="${m.id}" ${m.id === S.methodId ? 'checked' : ''}><span class="mchip__b"><span class="mk" style="--c:${m.color}">${m.mark}</span><span class="mchip__t"><b>${esc(m.name)}</b><small data-fee="${m.id}"></small></span></span></label>`).join('')}</div>`;
+  const methods = PAY_METHODS.length > 1 ? `<div class="mchips" role="radiogroup" aria-label="Metode pembayaran">${PAY_METHODS.map(m => `<label class="mchip"><input type="radio" name="method" value="${m.id}" ${m.id === S.methodId ? 'checked' : ''}><span class="mchip__b"><span class="mk" style="--c:${m.color}">${m.mark}</span><span class="mchip__t"><b>${esc(m.name)}</b><small data-fee="${m.id}"></small></span></span></label>`).join('')}</div>` : `<div class="pay-single"><div class="mchip" style="cursor:default"><span class="mchip__b"><span class="mk" style="--c:${PAY_METHODS[0].color}">${PAY_METHODS[0].mark}</span><span class="mchip__t"><b>${esc(PAY_METHODS[0].name)}</b><small data-fee="${PAY_METHODS[0].id}"></small></span></span></div><p class="muted" style="margin:8px 2px 0;font-size:13px">Pembayaran saat ini hanya tersedia melalui QRIS.</p></div>`;
 
   const secData = `<section class="cs" aria-labelledby="cs-data"><header class="cs__h"><h2 id="cs-data">${kind === 'game' ? 'Data akun' : 'Data tujuan'}</h2><p>${kind === 'game' ? 'Isi ID akun game tempat item dikirim.' : 'Isi nomor tujuan dengan teliti.'}</p></header><div class="fields${svc.fields.length > 1 && kind === 'game' ? ' fields--2' : ''}">${svc.fields.map(fieldHTML).join('')}</div>${post ? '<button type="button" class="btn btn--ink" id="bill-btn">Cek Tagihan</button>' : ''}</section>`;
   const secProd = `<section class="cs" aria-labelledby="os2"><header class="cs__h"><h2 id="os2">${post ? 'Rincian tagihan' : 'Pilih nominal'}</h2><p>${post ? 'Tagihan muncul setelah data dicek.' : 'Harga sudah termasuk layanan, biaya admin dihitung di struk.'}</p></header>${prodHTML}</section>`;
   const secPay = `<section class="cs" aria-labelledby="cs-pay"><header class="cs__h"><h2 id="cs-pay">Metode bayar</h2><p>Biaya admin tiap metode terlihat di bawah namanya.</p></header>${methods}</section>`;
 
   view.innerHTML = `<div class="wrap co2pg">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<a href="${listPath}">${kind === 'game' ? 'Top Up Game' : 'Isi Ulang & Tagihan'}</a>${ui('chevR', 14)}<span aria-current="page">${esc(svc.name)}</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<a href="${listPath}">${kind === 'game' ? 'Top Up Game' : 'Isi Ulang & Tagihan'}</a>${ui('chevR', 14)}<span aria-current="page">${esc(svc.name)}</span></nav>
     <form class="co2" id="co-form" novalidate autocomplete="off">
       <div class="co2__main">
         <header class="co-h">${svcIconHTML(svc, 'co-h__ico')}<div><h1>${esc(svc.name)}</h1><p>${esc(svc.desc)}</p></div></header>
@@ -971,7 +965,7 @@ function PageService(view, kind, id, query) {
     S.busy = true; paint();
     try {
       const order = await Api.createOrder({ kind, serviceId: svc.id, fields: { ...S.values }, productId: S.productId || undefined, billRef: S.bill ? S.bill.billRef : undefined, methodId: S.methodId });
-      Toast.show('Pesanan dibuat. Selesaikan pembayaran.'); location.hash = '#/pesanan/' + order.id;
+      Toast.show('Pesanan dibuat. Selesaikan pembayaran.'); Router.navigate('/pesanan/' + order.id);
     } catch (e) { Toast.show(e.message || 'Pesanan gagal dibuat.', 'err'); S.busy = false; paint(); }
   }
 
@@ -1012,7 +1006,7 @@ function PageService(view, kind, id, query) {
 function PageOrders(view, query) {
   const pre = String(query.q || '').toUpperCase();
   view.innerHTML = `<div class="wrap pg pg--narrow">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Cek Transaksi</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Cek Transaksi</span></nav>
     <section class="lookup" aria-labelledby="lk-h">
       <span class="lookup__ico">${ui('receipt', 30)}</span>
       <h1 id="lk-h">Cek status transaksi.</h1>
@@ -1023,14 +1017,14 @@ function PageOrders(view, query) {
       </form>
       <p class="lookup__note">${ui('info', 16)} Demi privasi, riwayat pesanan tidak disimpan di perangkat ini. Simpan nomor invoice kamu.</p>
     </section>
-    <p class="lookup__more">Belum punya pesanan? <a href="#/isi-ulang">Mulai memesan</a></p></div>`;
+    <p class="lookup__more">Belum punya pesanan? <a href="/isi-ulang">Mulai memesan</a></p></div>`;
   const inp = $('#inv-q', view), err = $('#inv-err', view), btn = $('#inv-btn', view); let alive = true;
   inp.addEventListener('input', () => { err.textContent = ''; });
   $('#inv-form', view).addEventListener('submit', async e => {
     e.preventDefault(); const q = inp.value.trim().toUpperCase().replace(/\s+/g, ''); err.textContent = '';
     if (!q) { err.textContent = 'Masukkan nomor invoice terlebih dahulu.'; inp.focus(); return; }
     btn.disabled = true; btn.textContent = 'Memeriksa…';
-    try { const o = await Api.getOrder(q); if (!alive) return; if (o) { location.hash = '#/pesanan/' + o.id; return; } err.textContent = `Invoice ${q} tidak ditemukan. Periksa kembali nomornya.`; inp.focus(); }
+    try { const o = await Api.getOrder(q); if (!alive) return; if (o) { Router.navigate('/pesanan/' + o.id); return; } err.textContent = `Invoice ${q} tidak ditemukan. Periksa kembali nomornya.`; inp.focus(); }
     catch (x) { err.textContent = 'Gagal memeriksa invoice. Coba lagi.'; }
     btn.disabled = false; btn.textContent = 'Cek Transaksi';
   });
@@ -1072,11 +1066,11 @@ function payPanel(o) {
 
 function PageOrder(view, id) {
   id = String(id).toUpperCase(); let alive = true, poll = null, tick = null, order = null;
-  view.innerHTML = `<div class="wrap pg"><nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<a href="#/pesanan">Cek Transaksi</a>${ui('chevR', 14)}<span aria-current="page">Detail</span></nav><div id="d-out"><div class="skeleton" style="height:240px;border-radius:24px"></div></div></div>`;
+  view.innerHTML = `<div class="wrap pg"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<a href="/pesanan">Cek Transaksi</a>${ui('chevR', 14)}<span aria-current="page">Detail</span></nav><div id="d-out"><div class="skeleton" style="height:240px;border-radius:24px"></div></div></div>`;
   const out = $('#d-out', view);
   function render() {
     const o = order;
-    if (!o) { out.innerHTML = `<div class="empty"><div class="empty__ico">${ui('search', 30)}</div><h1>Invoice tidak ditemukan</h1><p>Nomor <code>${esc(id)}</code> tidak terdaftar. Periksa kembali nomornya.</p><div class="empty__act"><a class="btn btn--accent" href="#/pesanan">Cek Invoice Lain</a></div></div>`; return; }
+    if (!o) { out.innerHTML = `<div class="empty"><div class="empty__ico">${ui('search', 30)}</div><h1>Invoice tidak ditemukan</h1><p>Nomor <code>${esc(id)}</code> tidak terdaftar. Periksa kembali nomornya.</p><div class="empty__act"><a class="btn btn--accent" href="/pesanan">Cek Invoice Lain</a></div></div>`; return; }
     const svc = Catalog.service(o.kind, o.serviceId), waiting = o.status === 'Menunggu Pembayaran', sc = statusClass(o.status);
     const copy = { 'Menunggu Pembayaran': ['Menunggu pembayaran', 'Selesaikan pembayaran sebelum batas waktu.'], 'Diproses': ['Sedang diproses', 'Pembayaran diterima. Mohon tunggu sebentar.'], 'Berhasil': ['Pesanan berhasil', 'Produk sudah terkirim ke tujuan.'], 'Gagal': ['Pesanan gagal', 'Hubungi kami dengan nomor invoice ini.'], 'Dibatalkan': ['Pesanan dibatalkan', o.note || 'Pesanan ini tidak dilanjutkan.'] }[o.status];
     const icon = { ok: 'check', warn: 'clock', info: 'clock', bad: 'x', mute: 'x' }[sc];
@@ -1138,7 +1132,7 @@ function PageHelp(view, sec) {
   if (SITE.address) contact.push(['Alamat', esc(SITE.address)]);
   const legal = k => `<details id="${k}"${sec === k ? ' open' : ''}><summary>${esc(LEGAL[k].title)}<span class="faq__pm" aria-hidden="true"></span></summary><div class="legal">${LEGAL[k].items.map((it, i) => `<h3>${i + 1}. ${esc(it[0])}</h3><p>${esc(it[1])}</p>`).join('')}</div></details>`;
   view.innerHTML = `<div class="wrap pg pg--narrow">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Bantuan</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Beranda</a>${ui('chevR', 14)}<span aria-current="page">Bantuan</span></nav>
     <header class="ph"><h1>Ada yang bisa dibantu?</h1></header>
     <div class="filters"><div class="search"><label class="sr" for="h-q">Cari pertanyaan</label>${ui('search', 18)}<input id="h-q" type="search" placeholder="Cari pertanyaan" autocomplete="off"></div></div>
     <section class="card hcard"><h2>Pertanyaan umum</h2><div class="faq" id="faq"></div></section>
@@ -1174,7 +1168,8 @@ const Router = {
     { re: /^\/bantuan(?:\/(\w+))?$/, nav: 'help', title: 'Bantuan', fn: (v, p) => PageHelp(v, p[0]) }
   ],
   parse() {
-    const raw = location.hash.replace(/^#/, '') || '/';
+    const h = location.hash.replace(/^#/, '');
+    const raw = h || location.pathname || '/';
     const [path, qs] = raw.split('?');
     return { path: path.replace(/(.)\/$/, '$1') || '/', query: parseQuery(qs) };
   },
@@ -1191,7 +1186,7 @@ const Router = {
     this.markNav(route ? route.nav : '');
     view.classList.add('page-in');
     try { this.cleanup = route ? route.fn(view, params, query) : PageNotFound(view); }
-    catch (e) { console.error(e); view.innerHTML = '<div class="wrap empty"><h1>Terjadi kendala</h1><p>Halaman gagal dimuat. Muat ulang atau kembali ke beranda.</p><a class="btn btn--accent" href="#/">Ke Beranda</a></div>'; }
+    catch (e) { console.error(e); view.innerHTML = '<div class="wrap empty"><h1>Terjadi kendala</h1><p>Halaman gagal dimuat. Muat ulang atau kembali ke beranda.</p><a class="btn btn--accent" href="/">Ke Beranda</a></div>'; }
     if (!(route && route.nav === 'help' && params[0])) window.scrollTo(0, 0);
   },
   markNav(key) {
@@ -1206,7 +1201,7 @@ const Router = {
 
 function PageNotFound(view) {
   setTitle('Halaman tidak ditemukan');
-  view.innerHTML = `<div class="wrap empty"><div class="empty__ico">${ui('search', 32)}</div><h1>Halaman tidak ditemukan</h1><p>Alamat yang Anda buka tidak tersedia atau sudah dipindahkan.</p><div class="empty__act"><a class="btn btn--accent" href="#/">Ke Beranda</a><a class="btn btn--ghost" href="#/isi-ulang">Lihat Layanan</a></div></div>`;
+  view.innerHTML = `<div class="wrap empty"><div class="empty__ico">${ui('search', 32)}</div><h1>Halaman tidak ditemukan</h1><p>Alamat yang Anda buka tidak tersedia atau sudah dipindahkan.</p><div class="empty__act"><a class="btn btn--accent" href="/">Ke Beranda</a><a class="btn btn--ghost" href="/isi-ulang">Lihat Layanan</a></div></div>`;
 }
 
 
@@ -1216,12 +1211,12 @@ function PageNotFound(view) {
 /* app.js — kerangka: header dua lapis (strip info + bar utama), tanpa menu di mobile, footer berisi semua tautan. */
 (function () {
   const LINKS = [['home', 'Beranda', '#/'], ['ppob', 'Isi Ulang & Tagihan', '#/isi-ulang'], ['game', 'Top Up Game', '#/topup'], ['pesanan', 'Cek Transaksi', '#/pesanan']];
-  const top = () => `<div class="util"><div class="util__in"><span>Harga terlihat sebelum bayar · Tanpa akun</span><nav aria-label="Tautan cepat"><a href="#/bantuan" data-nav="help">Bantuan</a><a href="#/bantuan/syarat">Syarat</a><a href="#/bantuan/privasi">Privasi</a></nav></div></div>
+  const top = () => `<div class="util"><div class="util__in"><span>Harga terlihat sebelum bayar · Tanpa akun</span><nav aria-label="Tautan cepat"><a href="/bantuan" data-nav="help">Bantuan</a><a href="/bantuan/syarat">Syarat</a><a href="/bantuan/privasi">Privasi</a></nav></div></div>
     <div class="top__in">${logoFull()}
     <nav class="top__links" aria-label="Navigasi utama">${LINKS.map(l => `<a href="${l[2]}" data-nav="${l[0]}">${l[1]}</a>`).join('')}</nav>
     <div class="top__r"><button type="button" class="top__find" data-open-palette aria-label="Cari layanan atau game (Ctrl+K)">${ui('search', 18)}<span>Cari</span><kbd>Ctrl K</kbd></button>
-      <a class="btn btn--accent btn--sm top__cta" href="#/isi-ulang">Mulai Pesan</a>
-      <a class="btn btn--ghost btn--sm top__tx" href="#/pesanan">Cek Transaksi</a></div></div>`;
+      <a class="btn btn--accent btn--sm top__cta" href="/isi-ulang">Mulai Pesan</a>
+      <a class="btn btn--ghost btn--sm top__tx" href="/pesanan">Cek Transaksi</a></div></div>`;
   function footer() {
     const c = [];
     if (SITE.email) c.push(`<li><a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></li>`);
@@ -1231,8 +1226,8 @@ function PageNotFound(view) {
     if (SITE.address) c.push(`<li>${esc(SITE.address)}</li>`);
     return `<div class="wrap"><div class="ft">
       <div class="ft__a">${logoFull()}<p>Isi pulsa, bayar tagihan, voucher digital, dan top up game dengan harga yang terlihat sebelum bayar.</p></div>
-      <div><h3>Layanan</h3><ul>${PPOB.slice(0, 5).map(s => `<li><a href="${Catalog.href(s)}">${esc(s.short || s.name)}</a></li>`).join('')}<li><a href="#/topup">Top Up Game</a></li></ul></div>
-      <div><h3>Bantuan</h3><ul><li><a href="#/pesanan">Cek Transaksi</a></li><li><a href="#/bantuan">Pertanyaan Umum</a></li><li><a href="#/bantuan/syarat">Syarat &amp; Ketentuan</a></li><li><a href="#/bantuan/privasi">Kebijakan Privasi</a></li></ul></div>
+      <div><h3>Layanan</h3><ul>${PPOB.slice(0, 5).map(s => `<li><a href="${Catalog.href(s)}">${esc(s.short || s.name)}</a></li>`).join('')}<li><a href="/topup">Top Up Game</a></li></ul></div>
+      <div><h3>Bantuan</h3><ul><li><a href="/pesanan">Cek Transaksi</a></li><li><a href="/bantuan">Pertanyaan Umum</a></li><li><a href="/bantuan/syarat">Syarat &amp; Ketentuan</a></li><li><a href="/bantuan/privasi">Kebijakan Privasi</a></li></ul></div>
       <div><h3>Kontak</h3><ul>${c.join('')}</ul></div></div>
       <div class="ft__pay"><span>Metode bayar</span>${PAY_METHODS.map(m => `<i>${esc(m.name)}</i>`).join('')}</div>
       <p class="ft__copy">© ${new Date().getFullYear()} ${esc(SITE.legalName || SITE.name)}</p></div>`;
