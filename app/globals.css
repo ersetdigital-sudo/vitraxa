@@ -1,0 +1,7 @@
+@import "../styles/vitraxa.css";
+
+:root {
+  --font: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display: var(--font-space-grotesk), var(--font-figtree), system-ui, sans-serif;
+}
+
