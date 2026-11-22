@@ -1173,6 +1173,12 @@ const Router = {
     const [path, qs] = raw.split('?');
     return { path: path.replace(/(.)\/$/, '$1') || '/', query: parseQuery(qs) };
   },
+  navigate(href) {
+    const url = href.startsWith('#') ? href.slice(1) : href;
+    if (url === (location.pathname + location.search)) return;
+    history.pushState(null, '', url);
+    this.go();
+  },
   go() {
     const { path, query } = this.parse();
     if (typeof this.cleanup === 'function') { try { this.cleanup(); } catch (e) { console.error(e); } }
@@ -1196,7 +1202,22 @@ const Router = {
       if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
   },
-  start() { window.addEventListener('hashchange', () => this.go()); this.go(); }
+  start() {
+    window.addEventListener('popstate', () => this.go());
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      if (a.target === '_blank' || a.hasAttribute('download')) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) return;
+      const url = href.startsWith('#') ? href.slice(1) : href;
+      if (!url.startsWith('/')) return;
+      e.preventDefault();
+      this.navigate(url);
+    });
+    this.go();
+  }
 };
 
 function PageNotFound(view) {
