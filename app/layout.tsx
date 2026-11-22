@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={`${figtree.variable} ${spaceGrotesk.variable}`}>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Script src="/vitraxa.js" strategy="afterInteractive" />
       </body>
